@@ -82,7 +82,7 @@ input("                         Presione enter para continuar\n")
 os.system("cls")
 
 print("Hola soy Baltox y he creado esta pequeña aventura pokemon\n")
-input("Te aventuraras en un pequeño mapa en donde tendras que derrotar\n"
+print("Te aventuraras en un pequeño mapa en donde tendras que derrotar\n"
       "a 5 entrenadores pokemon los cuales estan representados como *\n"
       "por el mapa,¿Podras demostrar que eres el mejor entrenador pokemon?\n")
 
@@ -179,8 +179,7 @@ while not end_game:
             if my_position[POS_X] == cordinate_x and my_position[POS_Y] == cordinate_y:
                 char_to_draw = "@"
 
-                if trainer_in_cell:  # comienzo del combate pokemonq
-                    os.system("cls")
+                if trainer_in_cell:  # comienzo del combate pokemon
                     combat = True
                     pokemon_trainers.remove(trainer_in_cell)
 
@@ -191,6 +190,18 @@ while not end_game:
         print("|")
 
     print("+" + "-" * MAP_WIDTH * 3 + "+")
+    print("{}".format(combat))
+
+    if combat:
+        os.system("cls")
+        message = random.randint(0, len(opponent_messages) - 1)
+        print("{}".format(opponent_messages[message]))
+        opponent = random.randint(0, len(enable_pokemons) - 1)
+        enemy = enable_pokemons[opponent]
+        print("Tu rival es {}".format(enemy))
+        input("                         Presione enter para continuar\n")
+        
+        combat = False
 
     direction = readchar.readchar()
     new_position = None
@@ -213,14 +224,5 @@ while not end_game:
     if new_position:
         if map_definition[new_position[POS_Y]][new_position[POS_X]] != "#":
             my_position = new_position
-
-    if combat == True:
-        os.system("cls")
-        message = random.randint(0, len(opponent_messages))
-        print("{}".format(opponent_messages[message]))
-        opponent = random.randint(0, len(enable_pokemons))
-        enemy = enable_pokemons[opponent]
-        print("Tu rival es {}".format(enemy))
-        combat = False
 
     os.system("cls")
