@@ -29,6 +29,16 @@ map_definition = """\
 """
 
 # variables pokemon
+my_pokemon_life = None
+my_pokemon_attacks = None
+my_pokemon_damages = None
+
+enemy_pokemon_life = None
+enemy_pokemon_attacks = None
+enemy_pokemon_damages = None
+
+
+SIZE_LIFE = 10
 
 life_pikachu = 100
 life_charmander = 100
@@ -52,21 +62,15 @@ attacks_bulbasaur = ["Drenadoras", "Latigo Cepa", "Hoja Afilada", "Placaje"]
 bulbasaur_damages = [15, 15, 20, 20]
 attacks_eevee = ["Placaje", "Latigo", "Gruñido", "Ataque Rapido"]
 eevee_damages = [20, 15, 15, 20]
-attacks_magikarp = ["Salpicadura", "Placaje"]
-magikarp_damages = [0, 35]
+attacks_magikarp = ["Salpicadura", "Placaje", "Salpicadura", "Placaje"]
+magikarp_damages = [0, 35, 0, 35]
 
 opponent_messages = ["Preparate para un desafio.....",
                      "Parece que eres nuevo en esto, no tendre problemas en derrotarte", "No creo que puedas vencerme",
                      "Si quieres pasar por aqui, tendras que pelear conmigo...",
                      "Que mal pasaste enfrente de mi, vamos a pelear....", "Ey me miraste gracioso, vamos a pelear..."]
 
-vida_pikachu = 80
-vida_squirtle = 90
-vida_inicial_pikachu = vida_pikachu
-vida_inicial_squirtle = vida_squirtle
-vida_combate_pikachu = float
-vida_combate_squirtle = float
-tam_vida = 10
+combats = 0
 
 # Game Start
 print("""\n
@@ -82,7 +86,7 @@ input("                         Presione enter para continuar\n")
 os.system("cls")
 
 print("Hola soy Baltox y he creado esta pequeña aventura pokemon\n")
-input("Te aventuraras en un pequeño mapa en donde tendras que derrotar\n"
+print("Te aventuraras en un pequeño mapa en donde tendras que derrotar\n"
       "a 5 entrenadores pokemon los cuales estan representados como *\n"
       "por el mapa,¿Podras demostrar que eres el mejor entrenador pokemon?\n")
 
@@ -97,6 +101,7 @@ pokemon_selected = int(input("Selecciona el numero del pokemon que deseas utiliz
                              "6.-Magikarp\n"
                              ": "))
 pokemon_selected = pokemon_selected - 1
+my_pokemon = pokemons[pokemon_selected]
 print("Bien has seleccionado a {} como tu pokemon, suerte en tu aventura y que te diviertas".format(pokemons[pokemon_selected]))
 if pokemons[pokemon_selected] == "Bulbasaur":
     my_pokemon_life = life_bulbasaur + 10
@@ -126,12 +131,7 @@ elif pokemons[pokemon_selected] == "Magikarp":
 for pokemon in pokemons:
     if pokemon != pokemons[pokemon_selected]:
         enable_pokemons.append(pokemon)
-
-print(enable_pokemons)
-print(my_pokemon_life)
-print(my_pokemon_attacks)
-print(my_pokemon_damages)
-
+my_pokemon_life_copy = my_pokemon_life
 
 input("                         Presione enter para continuar\n")
 
@@ -179,8 +179,7 @@ while not end_game:
             if my_position[POS_X] == cordinate_x and my_position[POS_Y] == cordinate_y:
                 char_to_draw = "@"
 
-                if trainer_in_cell:  # comienzo del combate pokemonq
-                    os.system("cls")
+                if trainer_in_cell:  # comienzo del combate pokemon
                     combat = True
                     pokemon_trainers.remove(trainer_in_cell)
 
@@ -191,6 +190,118 @@ while not end_game:
         print("|")
 
     print("+" + "-" * MAP_WIDTH * 3 + "+")
+
+    if combat:
+        os.system("cls")
+        message = random.randint(0, len(opponent_messages) - 1)
+        print("{}".format(opponent_messages[message]))
+        opponent = random.randint(0, len(enable_pokemons) - 1)
+        enemy = enable_pokemons[opponent]
+        print("Tu rival es {}".format(enemy))
+        input("                         Presione enter para continuar\n")
+        if enemy == "Bulbasaur":
+            enemy_pokemon_life = life_bulbasaur - 10
+            enemy_pokemon_attacks = attacks_bulbasaur
+            enemy_pokemon_damages = bulbasaur_damages
+        elif enemy == "Squirtle":
+            enemy_pokemon_life = life_squirtle - 10
+            enemy_pokemon_attacks = attacks_squirtle
+            enemy_pokemon_damages = squirtle_damages
+        elif enemy == "Charmander":
+            enemy_pokemon_life = life_charmander - 10
+            enemy_pokemon_attacks = attacks_charmander
+            enemy_pokemon_damages = charmander_damages
+        elif enemy == "Pikachu":
+            enemy_pokemon_life = life_pikachu - 10
+            enemy_pokemon_attacks = attacks_pikachu
+            enemy_pokemon_damages = pikachu_damages
+        elif enemy == "Eevee":
+            enemy_pokemon_life = life_eevee - 10 
+            enemy_pokemon_attacks = attacks_eevee
+            enemy_pokemon_damages = eevee_damages
+        elif enemy == "Magikarp":
+            enemy_pokemon_life = life_magikarp - 10
+            enemy_pokemon_attacks = attacks_magikarp
+            enemy_pokemon_damages = magikarp_damages
+        
+        my_life = my_pokemon_life
+        my_combat_life = float
+        my_attack = None
+        enemy_life = enemy_pokemon_life
+        enemy_combat_life = float
+        enemy_attack = None
+        # start pokemon battle 
+        while my_pokemon_life > 0 and enemy_pokemon_life > 0:
+            #enemy turn
+            print("Turno de {}".format(enemy))
+            enemy_attack = random.randint(0, len(enemy_pokemon_attacks))
+            if enemy_attack == 1:
+                print("{} ha utilizado {}".format(enemy, enemy_pokemon_attacks[0]))
+                my_pokemon_life -= enemy_pokemon_damages[0]
+            elif enemy_attack == 2:
+                print("{} ha utilizado {}".format(enemy, enemy_pokemon_attacks[1]))
+                my_pokemon_life -= enemy_pokemon_damages[1]
+            elif enemy_attack == 3:
+                print("{} ha utilizado {}".format(enemy, enemy_pokemon_attacks[2]))
+                my_pokemon_life -= enemy_pokemon_damages[1]
+            elif enemy_attack == 4:
+                print("{} ha utilizado {}".format(enemy, enemy_pokemon_attacks[3]))
+                my_pokemon_life -= enemy_pokemon_damages[1]
+            else: 
+                print("{} no ha atacado".format(enemy))
+            if my_pokemon_life < 0:
+                my_pokemon_life = 0
+            my_combat_life = int((my_pokemon_life * SIZE_LIFE)/my_life)
+            print("{} [{}{}] {}/{}".format(my_pokemon, "#" * my_combat_life, " " * (SIZE_LIFE - my_combat_life), my_pokemon_life, my_life))
+            enemy_combat_life = int((enemy_pokemon_life * SIZE_LIFE)/enemy_life)
+            print("{} [{}{}] {}/{}".format(enemy, "#" * enemy_combat_life, " " * (SIZE_LIFE - enemy_combat_life), enemy_pokemon_life, enemy_life))
+            input("                         Presione enter para continuar\n")
+            os.system("cls")
+
+            #player turn
+            print("Turno de {}".format(my_pokemon))
+            my_attack = None
+            while my_attack not in [1, 2, 3, 4, 5]:
+                my_attack = int(input("Que deberia hacer {}\n"
+                                      "1.- {}\n"
+                                      "2.- {}\n"
+                                      "3.- {}\n"
+                                      "4.- {}\n"
+                                      "5.- No atacar \n"
+                                      ": ".format(my_pokemon, my_pokemon_attacks[0], my_pokemon_attacks[1], my_pokemon_attacks[2], my_pokemon_attacks[3])))
+            if my_attack == 1:
+                print("{} ha utilizado {}".format(my_pokemon, my_pokemon_attacks[0]))
+                enemy_pokemon_life -= my_pokemon_damages[0]
+            elif my_attack == 2:
+                print("{} ha utilizado {}".format(my_pokemon, my_pokemon_attacks[1]))
+                enemy_pokemon_life -= my_pokemon_damages[1]
+            elif my_attack == 3:
+                print("{} ha utilizado {}".format(my_pokemon, my_pokemon_attacks[2]))
+                enemy_pokemon_life -= my_pokemon_damages[2]
+            elif my_attack == 4:
+                print("{} ha utilizado {}".format(my_pokemon, my_pokemon_attacks[3]))
+                enemy_pokemon_life -= my_pokemon_damages[3]
+            else:
+                print("{} no ha atacado".format(my_pokemon))
+            if enemy_pokemon_life < 0:
+                enemy_pokemon_life = 0
+            my_combat_life = int((my_pokemon_life * SIZE_LIFE)/my_life)
+            print("{} [{}{}] {}/{}".format(my_pokemon, "#" * my_combat_life, " " * (SIZE_LIFE - my_combat_life), my_pokemon_life, my_life))
+            enemy_combat_life = int((enemy_pokemon_life * SIZE_LIFE)/enemy_life)
+            print("{} [{}{}] {}/{}".format(enemy, "#" * enemy_combat_life, " " * (SIZE_LIFE - enemy_combat_life), enemy_pokemon_life, enemy_life))
+            input("                         Presione enter para continuar\n")
+            os.system("cls")
+            
+        if my_pokemon_life > enemy_pokemon_life:
+            print("{} gana".format(my_pokemon))
+            enable_pokemons.remove(enemy)
+            combats += 1
+            my_pokemon_life = my_pokemon_life_copy
+        else:
+            print("{} gana".format(enemy))
+            my_pokemon_life = my_pokemon_life_copy
+        
+        combat = False
 
     direction = readchar.readchar()
     new_position = None
@@ -213,14 +324,10 @@ while not end_game:
     if new_position:
         if map_definition[new_position[POS_Y]][new_position[POS_X]] != "#":
             my_position = new_position
-
-    if combat == True:
-        os.system("cls")
-        message = random.randint(0, len(opponent_messages))
-        print("{}".format(opponent_messages[message]))
-        opponent = random.randint(0, len(enable_pokemons))
-        enemy = enable_pokemons[opponent]
-        print("Tu rival es {}".format(enemy))
-        combat = False
+    
+    if pokemon_trainers == []:
+        break
 
     os.system("cls")
+print("Fin del juego, gracias por jugar")
+print("Has ganado {} combates".format(combats))
